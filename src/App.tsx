@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import Docs from './pages/Docs'
 import API from './pages/API'
 import Examples from './pages/Examples'
+import Plugins from './pages/Plugins'
 import NotFound from './pages/NotFound'
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
           <Route path="/docs/:section" element={<Docs />} />
           <Route path="/api" element={<API />} />
           <Route path="/examples" element={<Examples />} />
+          <Route path="/plugins" element={<Plugins />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>

@@ -9,6 +9,7 @@ export const mainNav: NavItem[] = [
   { href: '/docs', label: 'Docs', labelKey: 'nav.docs' },
   { href: '/api', label: 'API', labelKey: 'nav.api' },
   { href: '/examples', label: 'Examples', labelKey: 'nav.examples' },
+  { href: '/plugins', label: 'Plugins', labelKey: 'nav.plugins' },
 ]
 
 export const docsSidebar: NavItem[] = [
@@ -94,6 +95,14 @@ export const docsSidebar: NavItem[] = [
     children: [
       { href: '/docs/error-codes', label: 'Error Codes', labelKey: 'sidebar.errorCodes' },
       { href: '/docs/testing', label: 'Testing', labelKey: 'sidebar.testing' },
+    ],
+  },
+  {
+    href: '/plugins',
+    label: 'Plugins',
+    labelKey: 'sidebar.plugins',
+    children: [
+      { href: '/plugins', label: 'Creating Plugins', labelKey: 'sidebar.creatingPlugins' },
     ],
   },
 ]

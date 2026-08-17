@@ -3,6 +3,7 @@ export const en = {
   'nav.docs': 'Docs',
   'nav.api': 'API',
   'nav.examples': 'Examples',
+  'nav.plugins': 'Plugins',
   'nav.github': 'GitHub',
   'nav.install': 'Install',
 
@@ -79,6 +80,8 @@ export const en = {
   'sidebar.reference': 'Reference',
   'sidebar.errorCodes': 'Error Codes',
   'sidebar.testing': 'Testing',
+  'sidebar.plugins': 'Plugins',
+  'sidebar.creatingPlugins': 'Creating Plugins',
 
   // Footer
   'footer.copyright': 'Jade',
