@@ -89,6 +89,8 @@ export const ptBr = {
   "sidebar.reference": "Referência",
   "sidebar.errorCodes": "Códigos de Erro",
   "sidebar.testing": "Testes",
+  "sidebar.plugins": "Plugins",
+  "sidebar.creatingPlugins": "Criando Plugins",
 
   // Footer
   "footer.copyright": "Jade",
