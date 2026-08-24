@@ -1,17 +1,17 @@
 export interface PluginExample {
-  id: string
-  title: string
-  description: string
-  code: string
-  language: string
+  id: string;
+  title: string;
+  description: string;
+  code: string;
+  language: string;
 }
 
 export const pluginExamples: PluginExample[] = [
   {
-    id: 'basic-plugin',
-    title: 'Plugin Básico',
-    description: 'Um plugin mínimo seguindo o contrato padrão.',
-    language: 'lua',
+    id: "basic-plugin",
+    title: "Plugin Básico",
+    description: "Um plugin mínimo seguindo o contrato padrão.",
+    language: "lua",
     code: `local M = {}
 
 M.name        = "meu-plugin"
@@ -42,10 +42,10 @@ end
 return M`,
   },
   {
-    id: 'custom-entity-method',
-    title: 'Estender Entidades com Métodos Customizados',
-    description: 'Injetar métodos em todas as entidades via hook extendEntity.',
-    language: 'lua',
+    id: "custom-entity-method",
+    title: "Estender Entidades com Métodos Customizados",
+    description: "Injetar métodos em todas as entidades via hook extendEntity.",
+    language: "lua",
     code: `local M = {}
 
 M.name        = "entity-helpers"
@@ -91,10 +91,11 @@ return M
 -- User:countSoft() -- count com filtro de trashed`,
   },
   {
-    id: 'structured-logging',
-    title: 'Logging Estruturado para Queries',
-    description: 'Registrar todas as queries executadas com timestamps e métricas.',
-    language: 'lua',
+    id: "structured-logging",
+    title: "Logging Estruturado para Queries",
+    description:
+      "Registrar todas as queries executadas com timestamps e métricas.",
+    language: "lua",
     code: `local M = {}
 
 M.name        = "structured-logger"
@@ -153,10 +154,10 @@ end
 return M`,
   },
   {
-    id: 'rate-limiter',
-    title: 'Rate Limiting por Entidade',
-    description: 'Plugin que limita consultas por segundo por tabela.',
-    language: 'lua',
+    id: "rate-limiter",
+    title: "Rate Limiting por Entidade",
+    description: "Plugin que limita consultas por segundo por tabela.",
+    language: "lua",
     code: `local M = {}
 
 M.name        = "rate-limiter"
@@ -217,4 +218,4 @@ return M
 -- Configuração:
 -- { name = "rate-limiter", max_requests_per_second = 50, whitelist = {"logs"} },`,
   },
-]
+];

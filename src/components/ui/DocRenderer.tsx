@@ -26,7 +26,7 @@ function DocItem({ item }: { item: DocContent }) {
     case "paragraph":
       return (
         <p
-          className="text-zinc-300 dark:text-zinc-300 text-zinc-600 leading-relaxed [&_strong]:font-semibold [&_strong]:text-zinc-100 dark:[&_strong]:text-zinc-100 [&_strong]:text-zinc-900"
+          className="leading-relaxed text-zinc-600 dark:text-zinc-300 [&_strong]:font-semibold dark:[&_strong]:text-zinc-100"
           dangerouslySetInnerHTML={{ __html: mdBold(item.text) }}
         />
       );
@@ -53,12 +53,12 @@ function DocItem({ item }: { item: DocContent }) {
 
     case "list":
       return (
-        <ul className="space-y-2 text-zinc-300 dark:text-zinc-300 text-zinc-600">
+        <ul className="space-y-2 text-zinc-600 dark:text-zinc-300">
           {item.items.map((li, i) => (
             <li key={i} className="flex items-start gap-2">
-              <span className="mt-2 w-1 h-1 bg-emerald-500 rounded-full flex-shrink-0" />
+              <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-emerald-500" />
               <span
-                className="[&_strong]:font-semibold [&_strong]:text-zinc-100 dark:[&_strong]:text-zinc-100 [&_strong]:text-zinc-900"
+                className="[&_strong]:font-semibold [&_strong]:text-zinc-900 dark:[&_strong]:text-zinc-100"
                 dangerouslySetInnerHTML={{ __html: mdBold(li) }}
               />
             </li>
@@ -69,13 +69,13 @@ function DocItem({ item }: { item: DocContent }) {
     case "table":
       return (
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left">
+          <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-zinc-800 dark:border-zinc-800 border-zinc-200">
+              <tr className="border-b border-zinc-200 dark:border-zinc-800">
                 {item.headers.map((h, i) => (
                   <th
                     key={i}
-                    className="px-4 py-2 text-zinc-400 dark:text-zinc-400 text-zinc-500 font-medium"
+                    className="px-4 py-2 font-medium text-zinc-500 dark:text-zinc-400"
                   >
                     {h}
                   </th>
@@ -86,14 +86,14 @@ function DocItem({ item }: { item: DocContent }) {
               {item.rows.map((row, i) => (
                 <tr
                   key={i}
-                  className="border-b border-zinc-800/50 dark:border-zinc-800/50 border-zinc-200/50"
+                  className="border-b border-zinc-200/50 dark:border-zinc-800/50"
                 >
                   {row.map((cell, j) => (
                     <td
                       key={j}
-                      className="px-4 py-2 text-zinc-300 dark:text-zinc-300 text-zinc-600"
+                      className="px-4 py-2 text-zinc-600 dark:text-zinc-300"
                     >
-                      <code className="text-emerald-400 dark:text-emerald-400 text-emerald-600 text-xs">
+                      <code className="text-xs text-emerald-600 dark:text-emerald-400">
                         {cell}
                       </code>
                     </td>
@@ -114,7 +114,7 @@ function DocItem({ item }: { item: DocContent }) {
       };
       return (
         <div
-          className={`border-l-4 rounded-r-lg p-4 text-sm [&_strong]:font-semibold ${styles[item.variant]}`}
+          className={`rounded-r-lg border-l-4 p-4 text-sm [&_strong]:font-semibold ${styles[item.variant]}`}
           dangerouslySetInnerHTML={{ __html: mdBold(item.text) }}
         />
       );
@@ -124,7 +124,7 @@ function DocItem({ item }: { item: DocContent }) {
       return (
         <Link
           to={item.href}
-          className="text-emerald-400 hover:text-emerald-300 text-sm font-medium"
+          className="text-sm font-medium text-emerald-400 hover:text-emerald-300"
         >
           {item.text}
         </Link>

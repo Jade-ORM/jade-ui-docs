@@ -1,17 +1,17 @@
 export interface Example {
-  id: string
-  title: string
-  description: string
-  code: string
-  language: string
+  id: string;
+  title: string;
+  description: string;
+  code: string;
+  language: string;
 }
 
 export const examples: Example[] = [
   {
-    id: 'crud',
-    title: 'CRUD Operations',
-    description: 'Create, Read, Update, and Delete records.',
-    language: 'lua',
+    id: "crud",
+    title: "CRUD Operations",
+    description: "Create, Read, Update, and Delete records.",
+    language: "lua",
     code: `-- CREATE
 local user = User:create({
   name = "Lucas",
@@ -35,10 +35,10 @@ user:delete()
 User:delete(1)`,
   },
   {
-    id: 'query-builder',
-    title: 'Query Builder',
-    description: 'Build complex queries with chaining.',
-    language: 'lua',
+    id: "query-builder",
+    title: "Query Builder",
+    description: "Build complex queries with chaining.",
+    language: "lua",
     code: `-- Complex query with multiple conditions
 local users = User:where(User.age:gt(18))
   :where(User.active:eq(true))
@@ -58,10 +58,10 @@ local avgAge = User:average("age")
 local totalViews = Post:sum("views")`,
   },
   {
-    id: 'relations',
-    title: 'Relations',
-    description: 'Work with related entities.',
-    language: 'lua',
+    id: "relations",
+    title: "Relations",
+    description: "Work with related entities.",
+    language: "lua",
     code: `-- Define relations
 User:hasMany(Post)
 Post:belongsTo(User)
@@ -76,10 +76,10 @@ local user = User:find(1)
 local posts = user.posts:load()`,
   },
   {
-    id: 'transactions',
-    title: 'Transactions',
-    description: 'Atomic operations with automatic rollback.',
-    language: 'lua',
+    id: "transactions",
+    title: "Transactions",
+    description: "Atomic operations with automatic rollback.",
+    language: "lua",
     code: `-- Transaction with auto-commit/rollback
 jade.transaction.run(jade.driver(), function(tx)
   local user = User:create({ name = "Lucas" })
@@ -96,10 +96,10 @@ local ok, err = pcall(function()
 end)`,
   },
   {
-    id: 'encryption',
-    title: 'Encryption',
-    description: 'Encrypt sensitive data at rest.',
-    language: 'lua',
+    id: "encryption",
+    title: "Encryption",
+    description: "Encrypt sensitive data at rest.",
+    language: "lua",
     code: `-- Database-native encryption (PostgreSQL/MySQL)
 jade.Encryption.configure({ key = "secret-key" })
 
@@ -117,10 +117,10 @@ jade.Encryption.configure({
 })`,
   },
   {
-    id: 'validations',
-    title: 'Validations',
-    description: 'Validate data before saving.',
-    language: 'lua',
+    id: "validations",
+    title: "Validations",
+    description: "Validate data before saving.",
+    language: "lua",
     code: `-- Define validations
 User:validatePresenceOf("name")
 User:validatePresenceOf("email")
@@ -136,10 +136,10 @@ User:validateCustom("email", function(value, data)
 end, "Must be from example.com")`,
   },
   {
-    id: 'callbacks',
-    title: 'Callbacks',
-    description: 'Hook into entity lifecycle events.',
-    language: 'lua',
+    id: "callbacks",
+    title: "Callbacks",
+    description: "Hook into entity lifecycle events.",
+    language: "lua",
     code: `-- Before/after hooks
 User:beforeCreate(function(instance, data)
   data.created_by = currentUser.id
@@ -158,10 +158,10 @@ User:afterDelete(function(instance, data)
 end)`,
   },
   {
-    id: 'soft-delete',
-    title: 'Soft Delete',
-    description: 'Mark records as deleted without removing them.',
-    language: 'lua',
+    id: "soft-delete",
+    title: "Soft Delete",
+    description: "Mark records as deleted without removing them.",
+    language: "lua",
     code: `-- Enable soft delete
 local User = jade.Entity("users", {
   id = jade.Integer():primaryKey(),
@@ -183,4 +183,4 @@ User:onlyTrashed():get()
 -- Force delete (actually remove)
 User:where(User.id:eq(1)):forceDelete()`,
   },
-]
+];

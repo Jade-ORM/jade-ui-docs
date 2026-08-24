@@ -1,34 +1,40 @@
-import { entityMethods, conditionOperators } from '../data/api'
-import CodeBlock from '../components/ui/CodeBlock'
-import { useLanguage } from '../contexts/LanguageContext'
+import { entityMethods, conditionOperators } from "../data/api";
+import CodeBlock from "../components/ui/CodeBlock";
+import { useLanguage } from "../contexts/LanguageContext";
 
 export default function API() {
-  const { t } = useLanguage()
+  const { t } = useLanguage();
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-      <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white mb-2">
-        {t('api.title')}
+    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
+      <h1 className="mb-2 text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
+        {t("api.title")}
       </h1>
-      <p className="text-zinc-500 dark:text-zinc-400 mb-10">
-        {t('api.description')}
+      <p className="mb-10 text-zinc-500 dark:text-zinc-400">
+        {t("api.description")}
       </p>
 
       <section className="mb-16">
-        <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white mb-6">
-          {t('api.entityMethods')}
+        <h2 className="mb-6 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
+          {t("api.entityMethods")}
         </h2>
         <div className="space-y-8">
           {entityMethods.map((method) => (
-            <div key={method.name} className="border-b border-zinc-200 dark:border-zinc-800 pb-8">
-              <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-1 font-mono">
+            <div
+              key={method.name}
+              className="border-b border-zinc-200 pb-8 dark:border-zinc-800"
+            >
+              <h3 className="mb-1 font-mono text-lg font-semibold text-zinc-900 dark:text-white">
                 {method.signature}
               </h3>
-              <p className="text-zinc-500 dark:text-zinc-400 text-sm mb-3">
+              <p className="mb-3 text-sm text-zinc-500 dark:text-zinc-400">
                 {method.description}
               </p>
-              <p className="text-xs text-zinc-400 dark:text-zinc-500 mb-3">
-                {t('api.returns')}: <code className="text-emerald-500 dark:text-emerald-400">{method.returns}</code>
+              <p className="mb-3 text-xs text-zinc-400 dark:text-zinc-500">
+                {t("api.returns")}:{" "}
+                <code className="text-emerald-500 dark:text-emerald-400">
+                  {method.returns}
+                </code>
               </p>
               <CodeBlock code={method.example} language="lua" />
             </div>
@@ -37,15 +43,20 @@ export default function API() {
       </section>
 
       <section>
-        <h2 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-white mb-6">
-          {t('api.conditionOperators')}
+        <h2 className="mb-6 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
+          {t("api.conditionOperators")}
         </h2>
         <div className="space-y-6">
           {conditionOperators.map((op) => (
-            <div key={op.name} className="border-b border-zinc-200 dark:border-zinc-800 pb-6">
-              <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-1">
-                <span className="text-emerald-500 dark:text-emerald-400">{op.symbol}</span>
-                <span className="text-zinc-400 dark:text-zinc-500 text-sm ml-3 font-normal">
+            <div
+              key={op.name}
+              className="border-b border-zinc-200 pb-6 dark:border-zinc-800"
+            >
+              <h3 className="mb-1 text-lg font-semibold text-zinc-900 dark:text-white">
+                <span className="text-emerald-500 dark:text-emerald-400">
+                  {op.symbol}
+                </span>
+                <span className="ml-3 text-sm font-normal text-zinc-400 dark:text-zinc-500">
                   {op.description}
                 </span>
               </h3>
@@ -55,5 +66,5 @@ export default function API() {
         </div>
       </section>
     </div>
-  )
+  );
 }

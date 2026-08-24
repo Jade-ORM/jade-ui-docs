@@ -1,11 +1,11 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Layout from './components/layout/Layout'
-import Home from './pages/Home'
-import Docs from './pages/Docs'
-import API from './pages/API'
-import Examples from './pages/Examples'
-import Plugins from './pages/Plugins'
-import NotFound from './pages/NotFound'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Layout from "./components/layout/Layout";
+import Home from "./pages/Home";
+import Docs from "./pages/Docs";
+import API from "./pages/API";
+import Examples from "./pages/Examples";
+import Plugins from "./pages/Plugins";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -22,7 +22,7 @@ function App() {
         </Routes>
       </Layout>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;

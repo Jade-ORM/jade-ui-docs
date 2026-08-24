@@ -3,7 +3,8 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   background: #ffffff;
   color: #09090b;
@@ -20,7 +21,7 @@ body {
 }
 
 code {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
 }
 
 /* Custom Scrollbar - WebKit */

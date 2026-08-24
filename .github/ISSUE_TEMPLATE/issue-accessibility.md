@@ -5,23 +5,27 @@ O site de documentação Jade-Docs precisa de melhorias de acessibilidade (a11y)
 ## Problemas Comuns em Sites React + Tailwind
 
 ### 1. Contraste de cores
+
 - Texto claro em fundo claro
 - Links sem contraste suficiente
 - Code blocks com contraste insuficiente
 
 ### 2. Navegação por teclado
+
 - Links e botões devem ser focáveis
 - Skip to content link
 - Focus visible indicators
 - Tab order lógico
 
 ### 3. Screen readers
+
 - Imagens sem `alt` text
 - Ícones sem `aria-label`
 - Landmarks semânticos (`<nav>`, `<main>`, `<aside>`)
 - Headings hierarchy (h1 → h2 → h3)
 
 ### 4. Formulários
+
 - Labels associados a inputs
 - Error messages associadas a campos
 - Required fields indicados
@@ -29,6 +33,7 @@ O site de documentação Jade-Docs precisa de melhorias de acessibilidade (a11y)
 ## Solução Proposta
 
 ### 1. Adicionar skip link
+
 ```tsx
 function Layout({ children }) {
   return (
@@ -44,12 +49,14 @@ function Layout({ children }) {
 ```
 
 ### 2. Melhorar contraste
+
 ```tsx
 // Verificar WCAG 2.1 AA (4.5:1 para texto normal)
 // Usar ferramentas como axe DevTools ou Lighthouse
 ```
 
 ### 3. Adicionar landmarks semânticos
+
 ```tsx
 <header>...</header>
 <nav aria-label="Main navigation">...</nav>
@@ -59,6 +66,7 @@ function Layout({ children }) {
 ```
 
 ### 4. Code blocks acessíveis
+
 ```tsx
 <pre role="region" aria-label="Code example" tabIndex={0}>
   <code>...</code>
@@ -66,6 +74,7 @@ function Layout({ children }) {
 ```
 
 ### 5. Testes de acessibilidade
+
 ```bash
 npm install -D @axe-core/react jest-axe
 ```

@@ -1,36 +1,36 @@
-import { useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Sun, Moon } from 'lucide-react'
-import { useTheme } from '../../contexts/ThemeContext'
-import { useLanguage } from '../../contexts/LanguageContext'
-import { mainNav } from '../../data/navigation'
-import VersionSelector from '../ui/VersionSelector'
-import LanguageSelector from '../ui/LanguageSelector'
-import Logo from '../ui/Logo'
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, Sun, Moon } from "lucide-react";
+import { useTheme } from "../../contexts/ThemeContext";
+import { useLanguage } from "../../contexts/LanguageContext";
+import { mainNav } from "../../data/navigation";
+import VersionSelector from "../ui/VersionSelector";
+import LanguageSelector from "../ui/LanguageSelector";
+import Logo from "../ui/Logo";
 
 export default function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const location = useLocation()
-  const { theme, toggleTheme } = useTheme()
-  const { t } = useLanguage()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
+  const { t } = useLanguage();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-[#09090b]/80 backdrop-blur-xl border-b border-zinc-200 dark:border-zinc-800">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-14">
+    <header className="fixed top-0 right-0 left-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur-xl dark:border-zinc-800 dark:bg-[#09090b]/80">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="flex h-14 items-center justify-between">
           <Link to="/">
             <Logo />
           </Link>
 
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden items-center gap-1 md:flex">
             {mainNav.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
-                className={`px-3 py-1.5 text-sm rounded-md transition ${
+                className={`rounded-md px-3 py-1.5 text-sm transition ${
                   location.pathname.startsWith(link.href)
-                    ? 'text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-800'
-                    : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                    ? "bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-white"
+                    : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
                 }`}
               >
                 {t(link.labelKey as any)}
@@ -40,7 +40,7 @@ export default function Header() {
               href="https://github.com/AlehandroSV/Jade"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1.5 text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition"
+              className="px-3 py-1.5 text-sm text-zinc-500 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
             >
               GitHub
             </a>
@@ -51,9 +51,9 @@ export default function Header() {
               href="https://luarocks.org/modules/alehandrosv/jade"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex text-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition"
+              className="hidden text-sm text-zinc-500 transition hover:text-zinc-900 sm:inline-flex dark:text-zinc-400 dark:hover:text-white"
             >
-              {t('nav.install')}
+              {t("nav.install")}
             </a>
 
             <LanguageSelector />
@@ -61,31 +61,39 @@ export default function Header() {
 
             <button
               onClick={toggleTheme}
-              className="p-1.5 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition"
+              className="p-1.5 text-zinc-500 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
               aria-label="Toggle theme"
             >
-              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {theme === "dark" ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
             </button>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-1.5 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+              className="p-1.5 text-zinc-500 hover:text-zinc-900 md:hidden dark:text-zinc-400 dark:hover:text-white"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {mobileMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
             </button>
           </div>
         </div>
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#09090b]">
-          <div className="px-4 py-3 space-y-1">
+        <div className="border-t border-zinc-200 bg-white md:hidden dark:border-zinc-800 dark:bg-[#09090b]">
+          <div className="space-y-1 px-4 py-3">
             {mainNav.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="block px-3 py-2 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white text-sm rounded-md"
+                className="block rounded-md px-3 py-2 text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
               >
                 {t(link.labelKey as any)}
               </Link>
@@ -94,5 +102,5 @@ export default function Header() {
         </div>
       )}
     </header>
-  )
+  );
 }
