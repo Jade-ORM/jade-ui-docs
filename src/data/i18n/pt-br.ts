@@ -3,6 +3,7 @@ export const ptBr = {
   "nav.docs": "Documentação",
   "nav.api": "API",
   "nav.examples": "Exemplos",
+  "nav.plugins": "Plugins",
   "nav.github": "GitHub",
   "nav.install": "Instalar",
 
