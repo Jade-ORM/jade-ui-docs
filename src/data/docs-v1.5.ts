@@ -1190,4 +1190,189 @@ Infers: belongsTo → User`,
       },
     ],
   },
+  {
+    id: "db-pull",
+    title: "Database Introspection (db pull)",
+    description: "Generate entity files from existing databases.",
+    content: [
+      {
+        type: "paragraph",
+        text: "The `esmeralda db pull` command introspects your database and generates Jade entity files. It can infer relations, validations, scopes, and soft delete patterns automatically.",
+      },
+      { type: "heading", text: "Basic Usage", level: 3 },
+      {
+        type: "code",
+        language: "bash",
+        code: `# Generate basic entity files
+esmeralda db pull
+
+# Generate with all features
+esmeralda db pull --full
+
+# Generate only relations
+esmeralda db pull --relations
+
+# Generate only scopes and soft delete
+esmeralda db pull --scopes
+
+# Introspect a specific table
+esmeralda db pull -t users`,
+      },
+      { type: "heading", text: "What Gets Generated", level: 3 },
+      {
+        type: "table",
+        headers: ["Feature", "Flag", "Description"],
+        rows: [
+          [
+            "Relations",
+            "--relations",
+            "belongsTo, hasMany, hasAndBelongsToMany from foreign keys",
+          ],
+          [
+            "Validations",
+            "--full",
+            "validatePresenceOf for NOT NULL, validateUniquenessOf for UNIQUE",
+          ],
+          [
+            "Scopes",
+            "--scopes",
+            "Suggested scopes for boolean, status, and role columns",
+          ],
+          [
+            "Soft Delete",
+            "--scopes",
+            "Automatic softDelete() when deleted_at column exists",
+          ],
+          [
+            "Timestamps",
+            "--full",
+            "defaultNow() for created_at/updated_at columns",
+          ],
+        ],
+      },
+      { type: "heading", text: "Example Output", level: 3 },
+      {
+        type: "code",
+        language: "lua",
+        title: "schema/users.lua",
+        code: `-- Entity: Users
+-- Table: users
+-- Columns: 6 | Indexes: 1 | FKs: 0
+
+local Jade = require("jade")
+
+return Jade.Entity("users", {
+    id = Jade.Integer():primaryKey():notNull(),
+    email = Jade.String(255):notNull():unique(),
+    name = Jade.String(120):notNull(),
+    active = Jade.Boolean():default(true),
+    role = Jade.String(50):default("user"),
+    created_at = Jade.Timestamp():defaultNow(),
+    deleted_at = Jade.Timestamp(),
+})
+
+-- Suggested scopes
+Users:scope("active", { active = true })
+Users:scope("admin", { role = "admin" })
+
+-- Soft delete
+Users:softDelete()`,
+      },
+      {
+        type: "callout",
+        variant: "tip",
+        text: "Use --full to get the most complete entity generation. You can always edit the generated files afterwards.",
+      },
+    ],
+  },
+  {
+    id: "luals",
+    title: "LuaLS Integration",
+    description: "Autocomplete and type checking with Lua Language Server.",
+    content: [
+      {
+        type: "paragraph",
+        text: "Jade provides complete type definitions for the Lua Language Server (LuaLS), enabling autocomplete, type checking, and hover documentation in editors like VS Code, Neovim, and others.",
+      },
+      { type: "heading", text: "Setup", level: 3 },
+      {
+        type: "code",
+        language: "json",
+        title: ".luarc.json",
+        code: `{
+  "runtime": {
+    "version": "Lua 5.1"
+  },
+  "workspace": {
+    "library": ["src/jade/types"]
+  },
+  "completion": {
+    "callSnippet": "Replace"
+  }
+}`,
+      },
+      {
+        type: "callout",
+        variant: "info",
+        text: "The .luarc.json file should be placed in your project root. Jade includes this file by default.",
+      },
+      { type: "heading", text: "Features", level: 3 },
+      {
+        type: "list",
+        items: [
+          "Autocomplete for all Jade methods (Entity, Query, Instance, Column)",
+          "Type checking for method chaining",
+          "Hover documentation showing method signatures",
+          "Go-to-definition for Jade types and methods",
+          "Diagnostics for invalid type usage",
+        ],
+      },
+      { type: "heading", text: "Example", level: 3 },
+      {
+        type: "code",
+        language: "lua",
+        code: `local Jade = require("jade")
+
+-- Autocomplete works for:
+Jade.String()    -- Shows: Jade.Column
+Jade.Integer()   -- Shows: Jade.Column
+Jade.Entity(...) -- Shows: Jade.Entity
+
+local User = Jade.Entity("users", {
+    id = Jade.Integer():primaryKey(),
+    name = Jade.String(120):notNull(),
+})
+
+-- Autocomplete for Query methods
+User:where(...)  -- Shows: Jade.Query
+User:find(1)     -- Shows: Jade.Instance?
+
+-- Autocomplete for Instance methods
+local user = User:find(1)
+user:save()      -- Shows: Jade.Instance
+user:update({})  -- Shows: Jade.Instance
+user:toTable()   -- Shows: table`,
+      },
+      { type: "heading", text: "Supported Types", level: 3 },
+      {
+        type: "table",
+        headers: ["Class", "Description"],
+        rows: [
+          ["Jade", "Main module with all type constructors and configuration"],
+          [
+            "Jade.Entity",
+            "Entity definition with CRUD operations and query builder",
+          ],
+          ["Jade.Query", "Query builder with filtering, sorting, pagination"],
+          ["Jade.Instance", "Single record with save, update, delete methods"],
+          [
+            "Jade.Column",
+            "Column definition with modifiers (primaryKey, notNull, etc.)",
+          ],
+          ["Jade.Condition", "WHERE condition for query filtering"],
+          ["Jade.Expression", "Column expression for comparisons"],
+        ],
+      },
+    ],
+  },
 ];

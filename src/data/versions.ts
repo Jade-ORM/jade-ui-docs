@@ -4,6 +4,7 @@ import { docsSectionsV1_1 } from "./docs-v1.1";
 import { docsSectionsV1_2 } from "./docs-v1.2";
 import { docsSectionsV1_4 } from "./docs-v1.4";
 import { docsSectionsV1_5 } from "./docs-v1.5";
+import { docsSectionsV1_6 } from "./docs-v1.6";
 
 export interface Version {
   id: string;
@@ -46,8 +47,14 @@ export const versions: Version[] = [
   {
     id: "v1.5.0",
     label: "v1.5.*",
-    isLatest: true,
+    isLatest: false,
     sections: docsSectionsV1_5,
+  },
+  {
+    id: "v1.6.0",
+    label: "v1.6.*",
+    isLatest: true,
+    sections: docsSectionsV1_6,
   },
 ];
 

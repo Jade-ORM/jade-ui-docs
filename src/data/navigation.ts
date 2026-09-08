@@ -47,6 +47,11 @@ export const docsSidebar: NavItem[] = [
     children: [
       { href: "/docs/schema", label: "Overview", labelKey: "sidebar.overview" },
       {
+        href: "/docs/declarative-schema",
+        label: "Declarative Schema (.jade)",
+        labelKey: "sidebar.declarativeSchema",
+      },
+      {
         href: "/docs/column-types",
         label: "Column Types",
         labelKey: "sidebar.columnTypes",
@@ -115,6 +120,11 @@ export const docsSidebar: NavItem[] = [
         labelKey: "sidebar.overview",
       },
       { href: "/docs/cli", label: "CLI (Esmeralda)", labelKey: "sidebar.cli" },
+      {
+        href: "/docs/db-pull",
+        label: "Database Introspection",
+        labelKey: "sidebar.dbPull",
+      },
     ],
   },
   {
@@ -153,6 +163,11 @@ export const docsSidebar: NavItem[] = [
         href: "/docs/linter",
         label: "Linter (VS Code)",
         labelKey: "sidebar.linterVscode",
+      },
+      {
+        href: "/docs/luals",
+        label: "LuaLS Integration",
+        labelKey: "sidebar.luals",
       },
     ],
   },
