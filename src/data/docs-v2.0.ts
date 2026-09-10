@@ -23,7 +23,7 @@ export const docsSectionsV2_0: DocSection[] = [
     content: [
       {
         type: "paragraph",
-        text: "Jade v2 is a Data Mapper ORM for Lua 5.1+ inspired by Prisma. It maps your database tables to Lua objects with a declarative `.jade` schema, Esmeralda DX (generate → migrate dev), typed `J####` errors, and a fluent query builder. Runtime messages are English-only.",
+        text: "Jade v2 is a Data Mapper ORM for Lua 5.1+. It maps your database tables to Lua objects with a declarative `.jade` schema, Esmeralda DX (generate → migrate dev), typed `J####` errors, and a fluent query builder. Runtime messages are English-only.",
       },
       {
         type: "paragraph",
