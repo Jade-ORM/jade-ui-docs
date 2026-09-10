@@ -5,6 +5,20 @@ import type {
   SessionUser,
 } from "../types/plugin";
 
+/**
+ * Base URL of the Jade plugin API (separate service).
+ * Empty → same-origin `/api` (Vite proxy in dev, reverse-proxy in prod).
+ */
+function apiBase(): string {
+  const raw = import.meta.env.VITE_PLUGIN_API_URL as string | undefined;
+  if (!raw) return "";
+  return raw.replace(/\/$/, "");
+}
+
+function apiUrl(path: string): string {
+  return `${apiBase()}${path}`;
+}
+
 export class PluginApiError extends Error {
   code: string;
   status: number;
@@ -33,8 +47,8 @@ async function parseError(res: Response): Promise<PluginApiError> {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(path, {
-    credentials: "same-origin",
+  const res = await fetch(apiUrl(path), {
+    credentials: "include",
     headers: init?.body
       ? { "Content-Type": "application/json", ...(init.headers || {}) }
       : init?.headers,
@@ -46,7 +60,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export function loginUrl(): string {
-  return "/api/auth/login";
+  return apiUrl("/api/auth/github");
 }
 
 export async function fetchMe(): Promise<SessionUser | null> {
@@ -59,7 +73,7 @@ export async function logout(): Promise<void> {
 }
 
 export async function listCommunityPlugins(): Promise<CommunityPlugin[]> {
-  const data = await request<CommunityListResponse>("/api/plugins");
+  const data = await request<CommunityListResponse>("/api/plugins/community");
   return data.plugins;
 }
 
@@ -75,14 +89,14 @@ export async function submitPlugin(
 
 export async function refreshPlugin(id: string): Promise<CommunityPlugin> {
   const data = await request<{ plugin: CommunityPlugin }>(
-    `/api/plugins/${encodeURIComponent(id)}`,
+    `/api/plugins/${id}`,
     { method: "PATCH", body: JSON.stringify({}) },
   );
   return data.plugin;
 }
 
 export async function removePlugin(id: string): Promise<void> {
-  await request(`/api/plugins/${encodeURIComponent(id)}`, { method: "DELETE" });
+  await request(`/api/plugins/${id}`, { method: "DELETE" });
 }
 
 /** Lightweight client-side URL check (server re-validates). */

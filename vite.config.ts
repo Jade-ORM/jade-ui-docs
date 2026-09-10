@@ -8,6 +8,8 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
+      // Same-origin `/api` in dev so session cookies work without CORS.
+      // The plugin-api service is a separate process (see ../plugin-api).
       "/api": {
         target: apiTarget,
         changeOrigin: true,
