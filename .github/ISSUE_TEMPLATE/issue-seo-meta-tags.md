@@ -46,7 +46,7 @@ Sem:
 <meta property="og:title" content="Jade ORM - Modern ORM for Lua" />
 <meta
   property="og:description"
-  content="A modern ORM for Lua and Lapis inspired by Prisma. Schema-driven development with automatic migrations."
+  content="A modern ORM for Lua and Lapis. Schema-driven development with automatic migrations."
 />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://jade-orm.dev" />
@@ -57,7 +57,7 @@ Sem:
 <meta name="twitter:title" content="Jade ORM - Modern ORM for Lua" />
 <meta
   name="twitter:description"
-  content="A modern ORM for Lua and Lapis inspired by Prisma."
+  content="A modern ORM for Lua and Lapis."
 />
 <meta name="twitter:image" content="https://jade-orm.dev/og-image.png" />
 ```
