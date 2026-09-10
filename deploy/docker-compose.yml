@@ -1,0 +1,63 @@
+# Jade Docs + Plugin API stack (self-host, single PC + Docker)
+
+# Front: Vite SPA → nginx (same-origin /api proxy)
+# Back:  Express plugin-api (GitHub OAuth + community listings)
+# Store: named volume file store (default) OR Upstash/Vercel KV via env
+#
+# plugin-api does NOT use PostgreSQL/MySQL. A `db` service is intentionally
+# omitted — listings live in `.data/community-plugins.json` (volume) or KV.
+
+name: jade-docs
+
+services:
+  front:
+    build:
+      # jade-ui-docs repo root (this repo)
+      context: ..
+      dockerfile: deploy/front/Dockerfile
+      args:
+        # Empty → same-origin /api via nginx (recommended for cookies)
+        VITE_PLUGIN_API_URL: ${VITE_PLUGIN_API_URL:-}
+    image: jade-ui-docs:local
+    ports:
+      - "${FRONT_PORT:-8080}:80"
+    depends_on:
+      back:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - jade
+
+  back:
+    build:
+      # Sibling checkout: Jade-ORM/plugin-api next to jade-ui-docs
+      # Override with PLUGIN_API_CONTEXT if your layout differs
+      context: ${PLUGIN_API_CONTEXT:-../../plugin-api}
+    image: jade-plugin-api:local
+    ports:
+      # Direct access optional; normal traffic is front → back on the internal net
+      - "${BACK_PORT:-8787}:8787"
+    environment:
+      PORT: "8787"
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      SESSION_SECRET: ${SESSION_SECRET:-}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8080}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:8080}
+      # Public origin for OAuth redirect_uri. Same-origin via nginx:
+      # callback becomes http://localhost:8080/api/auth/callback
+      API_ORIGIN: ${API_ORIGIN:-http://localhost:8080}
+      KV_REST_API_URL: ${KV_REST_API_URL:-}
+      KV_REST_API_TOKEN: ${KV_REST_API_TOKEN:-}
+    volumes:
+      - plugin-data:/app/.data
+    restart: unless-stopped
+    networks:
+      - jade
+
+volumes:
+  plugin-data:
+
+networks:
+  jade:
+    driver: bridge
