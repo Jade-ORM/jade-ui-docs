@@ -59,13 +59,22 @@ export const docsSectionsV2_0: DocSection[] = [
   {
     id: "installation",
     title: "Installation",
-    description: "How to install Jade and its requirements.",
+    description: "Install Jade 2.0.0 and its requirements.",
     content: [
-      { type: "heading", text: "Install Jade", level: 3 },
+      { type: "heading", text: "Install Jade 2.0.0", level: 3 },
       {
         type: "code",
-        code: "luarocks install jade",
+        code: `# Latest 2.x (LuaRocks)
+luarocks install jade
+
+# Pin the 2.0.0 release
+luarocks install jade 2.0.0`,
         language: "bash",
+      },
+      {
+        type: "callout",
+        variant: "info",
+        text: "Jade v2.0.0 is the current stable baseline (typed J#### errors, English-only runtime, no jade.i18n). Release notes: github.com/Jade-ORM/jade-orm-core/releases/tag/v2.0.0",
       },
       { type: "heading", text: "Install Database Driver", level: 3 },
       {
@@ -1244,7 +1253,7 @@ user:update({})  -- Shows parameters`,
     content: [
       {
         type: "paragraph",
-        text: "Jade v2 is English-only at runtime, uses typed J#### errors, and standardizes on the Esmeralda DX (one .jade schema, generated barrel).",
+        text: "Jade v2.0.0 is English-only at runtime, uses typed J#### errors, and standardizes on the Esmeralda DX (one .jade schema, generated barrel).",
       },
       { type: "heading", text: "Removed", level: 3 },
       {
@@ -1273,13 +1282,22 @@ user:update({})  -- Shows parameters`,
 local Models = require("jade.generated")
 local User = Models.User`,
       },
-      { type: "heading", text: "CLI", level: 3 },
+      { type: "heading", text: "Migrations", level: 3 },
       {
         type: "list",
         items: [
+          "Migration tracker is **per-migration and portable** (PostgreSQL, MySQL, SQLite). Each migration is recorded inside its own transaction.",
           "Prefer `esmeralda migrate dev` over bare `esmeralda migrate`.",
           "`esmeralda-state.json` is the commitable snapshot (no leading dot).",
           "`esmeralda pull` is experimental (introspection → .jade).",
+        ],
+      },
+      { type: "heading", text: "Plugin authors", level: 3 },
+      {
+        type: "list",
+        items: [
+          "`unloadPlugin` actually clears CRUD/query hooks registered by the plugin (no longer a no-op).",
+          "`extendEntity` context now receives the real per-plugin install options (previously `{}`).",
         ],
       },
       {
@@ -1610,20 +1628,21 @@ jade.configure({
     database = { driver = "sqlite", database = ":memory:" }
 })
 
-local entities = jade.loadEntities("schema/models.jade")
 jade.syncSchema("schema/models.jade")
+local Models = require("jade.generated")
+local User = Models.User
 
 -- Test with busted
 local busted = require("busted")
 describe("User", function()
     it("creates a user", function()
-        local user = entities.User:create({ name = "Test" })
+        local user = User:create({ name = "Test" })
         assert.is_not_nil(user.id)
     end)
 
     it("validates required fields", function()
         assert.has_error(function()
-            entities.User:create({})
+            User:create({})
         end)
     end)
 end)`,
@@ -1637,19 +1656,59 @@ end)`,
     content: [
       {
         type: "paragraph",
-        text: "Jade has a plugin system that lets you add features without modifying the core. Plugins can add entity methods, hooks, and behaviors.",
+        text: "Jade has a plugin system that lets you add features without modifying the core. Plugins can add entity methods, hooks, and behaviors. Install options now reach extendEntity; unloadPlugin really clears hooks.",
       },
-      { type: "heading", text: "Built-in Plugins", level: 3 },
+      { type: "heading", text: "Official plugins", level: 3 },
+      {
+        type: "paragraph",
+        text: "Browse and install the official set from Jade-ORM/plugins registry.json (also listed on /plugins in this site). Community plugins self-publish via the Docs portal — no PR to the registry.",
+      },
       {
         type: "table",
-        headers: ["Plugin", "Description"],
+        headers: ["Plugin", "core_module", "Description"],
         rows: [
-          ["soft-delete", "Soft delete with deleted_at"],
-          ["audit", "Audit logging for changes"],
-          ["cache", "Query result caching"],
-          ["encryption", "Field-level encryption"],
-          ["optimistic-lock", "Optimistic locking with version"],
+          [
+            "cache",
+            "jade.plugin.cache",
+            "In-memory query result cache with TTL",
+          ],
+          [
+            "soft-delete",
+            "jade.plugin.soft_delete",
+            "Soft delete via entity hooks",
+          ],
+          [
+            "timestamps",
+            "jade.plugin.timestamps",
+            "Automatic created_at / updated_at",
+          ],
+          [
+            "tenant",
+            "jade.plugin.tenant",
+            "Automatic tenant_id injection on create",
+          ],
+          [
+            "sql-log",
+            "jade.plugin.sql_log",
+            "Log SQL queries through jade.log",
+          ],
+          [
+            "optimistic-lock",
+            "jade.plugin.optimistic_lock",
+            "Optimistic concurrency with version column",
+          ],
+          ["audit", "jade.plugin.audit", "Audit trail logging for entity CRUD"],
+          [
+            "encryption",
+            "jade.plugin.encryption",
+            "Field-level encryption (DB-native or custom)",
+          ],
         ],
+      },
+      {
+        type: "callout",
+        variant: "info",
+        text: "callbacks is a core-only builtin (wired in Entity.new) — not an official registry plugin.",
       },
       {
         type: "code",
@@ -1667,6 +1726,11 @@ return {
         { name = "audit" },
     },
 }`,
+      },
+      {
+        type: "link",
+        text: "Browse official + community plugins",
+        href: "/plugins",
       },
     ],
   },

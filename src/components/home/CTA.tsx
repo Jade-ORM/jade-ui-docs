@@ -24,7 +24,7 @@ export default function CTA() {
               <ArrowRight className="h-4 w-4" />
             </Link>
             <code className="font-mono text-sm text-zinc-500 dark:text-zinc-500">
-              luarocks install jade
+              luarocks install jade 2.0.0
             </code>
           </div>
         </div>
