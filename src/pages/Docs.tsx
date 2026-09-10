@@ -10,14 +10,15 @@ export default function Docs() {
   const { currentVersion } = useVersion();
   const { language, t } = useLanguage();
 
-  // Use translated sections when available
-  const sections =
-    language === "pt-br"
-      ? currentVersion.sections.map((s) => {
-          const translated = docsSectionsPtBr.find((ts) => ts.id === s.id);
-          return translated || s;
-        })
-      : currentVersion.sections;
+  // PT-BR content map targets 1.x section ids; v2+ stays EN (source of truth)
+  const useLegacyPtBrDocs =
+    language === "pt-br" && !currentVersion.id.startsWith("v2");
+  const sections = useLegacyPtBrDocs
+    ? currentVersion.sections.map((s) => {
+        const translated = docsSectionsPtBr.find((ts) => ts.id === s.id);
+        return translated || s;
+      })
+    : currentVersion.sections;
 
   const current = sections.find((s) => s.id === section) || sections[0];
 

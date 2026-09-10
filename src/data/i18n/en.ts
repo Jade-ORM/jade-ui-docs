@@ -89,6 +89,7 @@ export const en = {
   "sidebar.luals": "LuaLS Integration",
   "sidebar.reference": "Reference",
   "sidebar.errorCodes": "Error Codes",
+  "sidebar.breakingChanges": "Breaking Changes",
   "sidebar.testing": "Testing",
   "sidebar.plugins": "Plugins",
   "sidebar.creatingPlugins": "Author Guide",

@@ -8,7 +8,11 @@ import {
   CommunityPluginCard,
   OfficialPluginCard,
 } from "../components/plugins/PluginCards";
-import { officialPlugins } from "../data/official-plugins";
+import {
+  fetchOfficialPlugins,
+  officialPlugins as officialPluginsFallback,
+} from "../data/official-plugins";
+import type { CommunityPlugin, OfficialPlugin } from "../types/plugin";
 import { pluginExamples } from "../data/plugins-data";
 import { useAuth } from "../contexts/AuthContext";
 import { useLanguage } from "../contexts/LanguageContext";
@@ -18,12 +22,14 @@ import {
   refreshPlugin,
   removePlugin,
 } from "../lib/plugin-api";
-import type { CommunityPlugin } from "../types/plugin";
 
 export default function Plugins() {
   const { t } = useLanguage();
   const { user, loading: authLoading, logout, refresh } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [official, setOfficial] = useState<OfficialPlugin[]>(
+    officialPluginsFallback,
+  );
   const [community, setCommunity] = useState<CommunityPlugin[]>([]);
   const [loadingList, setLoadingList] = useState(true);
   const [listError, setListError] = useState<string | null>(null);
@@ -49,6 +55,16 @@ export default function Plugins() {
   useEffect(() => {
     void loadList();
   }, [loadList]);
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetchOfficialPlugins().then((plugins) => {
+      if (!cancelled) setOfficial(plugins);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     void refresh();
@@ -175,7 +191,7 @@ export default function Plugins() {
           </p>
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
-          {officialPlugins.map((plugin) => (
+          {official.map((plugin) => (
             <OfficialPluginCard key={plugin.name} plugin={plugin} />
           ))}
         </div>

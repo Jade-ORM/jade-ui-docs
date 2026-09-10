@@ -1,4 +1,4 @@
-﻿# jade-ui-docs — agent rules
+# jade-ui-docs — agent rules
 
 ## Branding
 
