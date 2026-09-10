@@ -9,15 +9,20 @@ Documentation website for [Jade ORM](https://github.com/AlehandroSV/Jade) - a mo
 - Tailwind CSS v4
 - React Router v7
 - React Syntax Highlighter
-- Vercel Serverless Functions (`api/`) for GitHub OAuth + community plugin listings
+- **Backend** (`backend/`) — Express API: GitHub OAuth + community plugin listings
+- Vercel catch-all (`api/[[...path]].ts`) mounts the same Express app in production
 
 ## Development
 
 ```bash
-# Install dependencies
+# Install dependencies (root + backend)
 npm install
+npm --prefix backend install
 
-# Start dev server
+# Terminal 1 — API (http://localhost:8787)
+npm run dev:api
+
+# Terminal 2 — frontend (http://localhost:5173, proxies /api → :8787)
 npm run dev
 
 # Build for production
@@ -34,30 +39,27 @@ The `/plugins` marketplace lists:
 - **Official** — static snapshot of `Jade-ORM/plugins` → `registry.json`
 - **Community** — self-published listings (GitHub login + repo URL)
 
-API routes live in `api/` and run on Vercel. For full local auth/publish flow:
-
-```bash
-npm i -g vercel
-vercel dev
-```
-
-Vite (`npm run dev`) still serves the UI; API calls need `vercel dev` (or a deployed preview).
+Login and listings are handled by the **backend** (`backend/`). See [backend/README.md](backend/README.md) for routes and env vars.
 
 #### Environment
 
-Copy `.env.example` and set:
+Copy `backend/.env.example` (and/or root `.env.example`) and set:
 
-| Variable                                    | Purpose                   |
-| ------------------------------------------- | ------------------------- |
-| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | GitHub OAuth App          |
-| `SESSION_SECRET`                            | Encrypts session cookies  |
-| `PUBLIC_SITE_URL`                           | Optional canonical origin |
-| `KV_REST_API_URL` + `KV_REST_API_TOKEN`     | Vercel KV / Upstash Redis |
+| Variable                                    | Purpose                                 |
+| ------------------------------------------- | --------------------------------------- |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | GitHub OAuth App                        |
+| `SESSION_SECRET`                            | Encrypts session cookies                |
+| `PUBLIC_SITE_URL`                           | Frontend origin for post-login redirect |
+| `KV_REST_API_URL` + `KV_REST_API_TOKEN`     | Vercel KV / Upstash Redis               |
 
-OAuth App callback URL: `https://<domain>/api/auth/callback`  
+OAuth App callback URL:
+
+- **Dev (via Vite proxy):** `http://localhost:5173/api/auth/callback`
+- **Prod:** `https://<domain>/api/auth/callback`
+
 Scope requested: `read:user`.
 
-Without KV credentials, listings are stored in `api/.data/community-plugins.json` (local demo only).
+Without KV credentials, listings are stored in `backend/.data/community-plugins.json` (local demo only).
 
 #### Plugin contract
 
@@ -65,12 +67,18 @@ Community repos must ship `jade-plugin.json` at the root (`name`, `version`, `de
 
 ## Deployment
 
-This project is deployed to Vercel. Push to `main` to trigger automatic deployment.
+This project is deployed to Vercel. Push to `main` to trigger automatic deployment. Set the env vars above in the Vercel project.
 
 ## Structure
 
 ```
-api/                   # Vercel serverless functions (OAuth + plugins API)
+api/                   # Vercel adapter (mounts backend Express app)
+backend/               # Express API (auth GitHub + plugins)
+├── src/
+│   ├── app.ts         # Express app
+│   ├── index.ts       # Local server entry
+│   ├── lib/           # session, store, github, http
+│   └── routes/        # auth, plugins
 src/
 ├── components/
 │   ├── home/          # Home page sections (Hero, Features, etc.)

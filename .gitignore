@@ -47,9 +47,13 @@ venv/
 .env
 .env.local
 .env.*
+!.env.example
+!backend/.env.example
 
 # Local plugin store (dev fallback when KV is not configured)
 api/.data/
+backend/.data/
+backend/node_modules/
 
 # IDE
 .vscode/

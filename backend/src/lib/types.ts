@@ -27,6 +27,13 @@ export interface SessionUser {
   accessToken: string;
 }
 
+export interface PublicUser {
+  githubId: number;
+  login: string;
+  name: string | null;
+  avatarUrl: string;
+}
+
 export interface JadePluginManifest {
   name: string;
   version: string;

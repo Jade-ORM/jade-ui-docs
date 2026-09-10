@@ -1,4 +1,4 @@
-import type { JadePluginManifest, SessionUser } from "./types";
+import type { JadePluginManifest, SessionUser } from "./types.js";
 
 export interface ParsedRepo {
   owner: string;
@@ -143,7 +143,6 @@ export async function assertCanPublish(
   }
   const data = (await res.json()) as {
     private?: boolean;
-    archived?: boolean;
     disabled?: boolean;
     owner?: { login?: string; type?: string };
   };
@@ -166,11 +165,6 @@ export async function assertCanPublish(
       { headers: ghHeaders(user.accessToken) },
     );
     if (mem.ok) return { ok: true };
-    return {
-      ok: false,
-      message:
-        "You can only publish repositories you own, or public org repos where you are a public member.",
-    };
   }
 
   return {

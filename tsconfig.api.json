@@ -14,5 +14,5 @@
     "noUnusedParameters": true,
     "allowImportingTsExtensions": true
   },
-  "include": ["api/**/*.ts"]
+  "include": ["api/**/*.ts", "backend/src/**/*.ts"]
 }

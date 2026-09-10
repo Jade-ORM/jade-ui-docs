@@ -1,6 +1,6 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
-import type { CommunityPlugin } from "./types";
+import type { CommunityPlugin } from "./types.js";
 
 const LIST_KEY = "jade:plugins:community";
 
@@ -13,11 +13,14 @@ function kvConfigured(): boolean {
 }
 
 function kvEndpoint(): { url: string; token: string } {
-  const url =
-    process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || "";
-  const token =
-    process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || "";
-  return { url, token };
+  return {
+    url:
+      process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || "",
+    token:
+      process.env.KV_REST_API_TOKEN ||
+      process.env.UPSTASH_REDIS_REST_TOKEN ||
+      "",
+  };
 }
 
 async function redisCommand(...cmd: Array<string | number>): Promise<unknown> {
@@ -30,16 +33,14 @@ async function redisCommand(...cmd: Array<string | number>): Promise<unknown> {
     },
     body: JSON.stringify(cmd),
   });
-  if (!res.ok) {
-    throw new Error(`KV request failed (${res.status})`);
-  }
+  if (!res.ok) throw new Error(`KV request failed (${res.status})`);
   const data = (await res.json()) as { result?: unknown; error?: string };
   if (data.error) throw new Error(data.error);
   return data.result;
 }
 
 function localFile(): string {
-  return join(process.cwd(), "api", ".data", "community-plugins.json");
+  return join(process.cwd(), "backend", ".data", "community-plugins.json");
 }
 
 function readLocalList(): CommunityPlugin[] {
@@ -115,7 +116,6 @@ export async function rateLimit(
   const window = Math.floor(Date.now() / 1000 / windowSec);
   const key = `jade:rl:${bucket}:${window}`;
   if (!kvConfigured()) {
-    // File store: soft-limit via list size is enough for local demo.
     return { ok: true, remaining: limit, retryAfterSec: 0 };
   }
   const countRaw = await redisCommand("INCR", key);
