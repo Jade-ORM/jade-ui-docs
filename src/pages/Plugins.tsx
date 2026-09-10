@@ -1,40 +1,317 @@
-import { pluginExamples } from "../data/plugins-data";
+import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { Plus, LogOut, Loader2, ChevronDown } from "lucide-react";
+import { GitHubMark } from "../components/ui/GitHubMark";
 import CodeBlock from "../components/ui/CodeBlock";
+import SubmitPluginModal from "../components/plugins/SubmitPluginModal";
+import {
+  CommunityPluginCard,
+  OfficialPluginCard,
+} from "../components/plugins/PluginCards";
+import { officialPlugins } from "../data/official-plugins";
+import { pluginExamples } from "../data/plugins-data";
+import { useAuth } from "../contexts/AuthContext";
+import { useLanguage } from "../contexts/LanguageContext";
+import {
+  listCommunityPlugins,
+  loginUrl,
+  refreshPlugin,
+  removePlugin,
+} from "../lib/plugin-api";
+import type { CommunityPlugin } from "../types/plugin";
 
 export default function Plugins() {
+  const { t } = useLanguage();
+  const { user, loading: authLoading, logout, refresh } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [community, setCommunity] = useState<CommunityPlugin[]>([]);
+  const [loadingList, setLoadingList] = useState(true);
+  const [listError, setListError] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [guideOpen, setGuideOpen] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  const loadList = useCallback(async () => {
+    setLoadingList(true);
+    setListError(null);
+    try {
+      const plugins = await listCommunityPlugins();
+      setCommunity(plugins);
+    } catch {
+      setListError(t("plugins.errList"));
+      setCommunity([]);
+    } finally {
+      setLoadingList(false);
+    }
+  }, [t]);
+
+  useEffect(() => {
+    void loadList();
+  }, [loadList]);
+
+  useEffect(() => {
+    void refresh();
+    const oauthError = searchParams.get("auth_error");
+    if (oauthError) setAuthError(oauthError);
+    if (oauthError || searchParams.get("auth")) {
+      const next = new URLSearchParams(searchParams);
+      next.delete("auth");
+      next.delete("auth_error");
+      setSearchParams(next, { replace: true });
+    }
+  }, [searchParams, setSearchParams, refresh]);
+
+  const handleRefresh = async (plugin: CommunityPlugin) => {
+    setBusyId(plugin.id);
+    try {
+      const updated = await refreshPlugin(plugin.id);
+      setCommunity((prev) =>
+        prev.map((p) => (p.id === updated.id ? updated : p)),
+      );
+    } catch {
+      // keep list as-is; user can retry
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const handleDelete = async (plugin: CommunityPlugin) => {
+    if (!window.confirm(t("plugins.confirmDelete"))) return;
+    setBusyId(plugin.id);
+    try {
+      await removePlugin(plugin.id);
+      setCommunity((prev) => prev.filter((p) => p.id !== plugin.id));
+    } catch {
+      // ignore
+    } finally {
+      setBusyId(null);
+    }
+  };
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
-      <h1 className="mb-2 text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
-        Criando Plugins para Jade
-      </h1>
-      <p className="mb-10 text-zinc-500 dark:text-zinc-400">
-        Guia completo para criar extensões modulares que estendem o sistema do
-        Jade sem modificar o core.
-      </p>
+      <div className="mb-10 flex flex-wrap items-start justify-between gap-4">
+        <div className="max-w-2xl">
+          <h1 className="mb-2 text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
+            {t("plugins.title")}
+          </h1>
+          <p className="text-zinc-500 dark:text-zinc-400">
+            {t("plugins.description")}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          {authLoading ? (
+            <span className="inline-flex items-center gap-2 text-sm text-zinc-400">
+              <Loader2 className="h-4 w-4 animate-spin" />
+            </span>
+          ) : user ? (
+            <>
+              <span className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 px-3 py-2 text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+                <img
+                  src={user.avatarUrl}
+                  alt=""
+                  className="h-5 w-5 rounded-full"
+                  referrerPolicy="no-referrer"
+                />
+                @{user.login}
+              </span>
+              <button
+                type="button"
+                onClick={() => void logout()}
+                className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-zinc-500 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+                title={t("plugins.signOut")}
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="sr-only sm:not-sr-only">
+                  {t("plugins.signOut")}
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setModalOpen(true)}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-700 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-emerald-600"
+              >
+                <Plus className="h-4 w-4" />
+                {t("plugins.submit")}
+              </button>
+            </>
+          ) : (
+            <>
+              <a
+                href={loginUrl()}
+                className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 px-3.5 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+              >
+                <GitHubMark className="h-4 w-4" />
+                {t("plugins.signIn")}
+              </a>
+              <button
+                type="button"
+                onClick={() => setModalOpen(true)}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-700 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-emerald-600"
+              >
+                <Plus className="h-4 w-4" />
+                {t("plugins.submit")}
+              </button>
+            </>
+          )}
+        </div>
+      </div>
 
-      {/* Interface Section */}
+      {authError && (
+        <div className="mb-6 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
+          {t("plugins.authError")}
+        </div>
+      )}
+
+      {/* Official */}
       <section className="mb-12">
-        <h2 className="mb-4 text-xl font-semibold text-zinc-900 dark:text-white">
-          Interface Padrão
-        </h2>
-        <p className="mb-4 text-zinc-600 dark:text-zinc-400">
-          Todo plugin segue este contrato mínimo — declare nome, versão e
-          opcionalmente hooks + setup.
-        </p>
-        <CodeBlock
-          code={`local M = {}
+        <div className="mb-4 flex items-baseline justify-between gap-3">
+          <h2 className="text-xl font-semibold text-zinc-900 dark:text-white">
+            {t("plugins.official")}
+          </h2>
+          <p className="text-xs text-zinc-400 dark:text-zinc-500">
+            {t("plugins.officialHint")}
+          </p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {officialPlugins.map((plugin) => (
+            <OfficialPluginCard key={plugin.name} plugin={plugin} />
+          ))}
+        </div>
+      </section>
 
-M.name        = "meu-plugin"         -- Identificador único (obrigatório)
-M.version     = "1.0.0"              -- Semver recomendado
-M.description = "Descrição curta"    -- Para documentação
+      {/* Community */}
+      <section className="mb-16">
+        <div className="mb-4 flex items-baseline justify-between gap-3">
+          <h2 className="text-xl font-semibold text-zinc-900 dark:text-white">
+            {t("plugins.community")}
+          </h2>
+          <p className="text-xs text-zinc-400 dark:text-zinc-500">
+            {t("plugins.communityHint")}
+          </p>
+        </div>
 
--- Hooks opcionais (registrados automaticamente pelo loader)
+        {loadingList ? (
+          <div className="flex items-center gap-2 rounded-xl border border-dashed border-zinc-200 px-4 py-8 text-sm text-zinc-400 dark:border-zinc-800">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            {t("plugins.loading")}
+          </div>
+        ) : listError ? (
+          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-6 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300">
+            {listError}
+          </div>
+        ) : community.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-zinc-200 px-4 py-10 text-center dark:border-zinc-800">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              {t("plugins.empty")}
+            </p>
+            <button
+              type="button"
+              onClick={() => setModalOpen(true)}
+              className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-emerald-700 px-3.5 py-2 text-sm font-medium text-white transition hover:bg-emerald-600"
+            >
+              <Plus className="h-4 w-4" />
+              {t("plugins.submit")}
+            </button>
+          </div>
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2">
+            {community.map((plugin) => (
+              <CommunityPluginCard
+                key={plugin.id}
+                plugin={plugin}
+                isOwner={user?.githubId === plugin.owner.githubId}
+                onRefresh={(p) => void handleRefresh(p)}
+                onDelete={(p) => void handleDelete(p)}
+                busy={busyId === plugin.id}
+              />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Author guide (collapsible) */}
+      <section className="mb-12">
+        <button
+          type="button"
+          onClick={() => setGuideOpen((v) => !v)}
+          className="flex w-full items-center justify-between rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-left dark:border-zinc-800 dark:bg-zinc-900"
+        >
+          <span className="text-sm font-semibold text-zinc-900 dark:text-white">
+            {t("plugins.guideToggle")}
+          </span>
+          <ChevronDown
+            className={`h-4 w-4 text-zinc-400 transition-transform ${
+              guideOpen ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+
+        {guideOpen && (
+          <div className="mt-8 space-y-12">
+            <section>
+              <h2 className="mb-4 text-xl font-semibold text-zinc-900 dark:text-white">
+                {t("plugins.guideContract")}
+              </h2>
+              <p className="mb-4 text-sm text-zinc-600 dark:text-zinc-400">
+                {t("plugins.guideContractDesc")}
+              </p>
+              <CodeBlock
+                title="jade-plugin.json"
+                language="json"
+                code={`{
+  "name": "acme-tenant",
+  "version": "1.0.0",
+  "description": "Multi-tenant scoping for Jade entities",
+  "jade": ">=2.0.0",
+  "lua": ">=5.1",
+  "main": "src/init.lua",
+  "repository": "https://github.com/acme/jade-plugin-tenant",
+  "keywords": ["tenant", "multi-tenant"]
+}`}
+              />
+              <p className="mt-4 mb-2 text-sm text-zinc-600 dark:text-zinc-400">
+                {t("plugins.guideLua")}
+              </p>
+              <CodeBlock
+                title="src/init.lua"
+                language="lua"
+                code={`local M = {}
+
+M.name        = "acme-tenant"
+M.version     = "1.0.0"
+M.description = "Multi-tenant scoping for Jade entities"
+
+function M.setup(jade, opts)
+    opts = opts or {}
+    -- install hooks / validate config
+    return true
+end
+
+return M`}
+              />
+            </section>
+
+            <section>
+              <h2 className="mb-4 text-xl font-semibold text-zinc-900 dark:text-white">
+                {t("plugins.guideInterface")}
+              </h2>
+              <p className="mb-4 text-sm text-zinc-600 dark:text-zinc-400">
+                {t("plugins.guideInterfaceDesc")}
+              </p>
+              <CodeBlock
+                code={`local M = {}
+
+M.name        = "meu-plugin"
+M.version     = "1.0.0"
+M.description = "Descrição curta"
+
 M.hooks = {
     beforeQuery  = function(ctx) print("SQL:", ctx.sql) end,
     afterCreate  = function(ctx) print("Criado:", ctx.entity._table) end,
     extendEntity = function(ctx)
         local entity = ctx.entity
-        -- Adicionar métodos customizados à entidade
         function entity:findOrCreate(cond, defaults)
             local record = self:where(cond):first()
             if record then return record end
@@ -44,174 +321,123 @@ M.hooks = {
 }
 
 function M.setup(jade, opts)
-    -- Instalação: validação, configuração inicial
     return true
 end
 
 function M.teardown(jade)
-    -- Cleanup ao desinstalar
 end
 
 return M`}
-          language="lua"
-        />
-      </section>
-
-      {/* Hook Types Table */}
-      <section className="mb-12">
-        <h2 className="mb-4 text-xl font-semibold text-zinc-900 dark:text-white">
-          Hooks Disponíveis
-        </h2>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-left text-sm">
-            <thead>
-              <tr className="border-b border-zinc-200 dark:border-zinc-700">
-                <th className="py-2 pr-4 font-medium text-zinc-700 dark:text-zinc-300">
-                  Hook
-                </th>
-                <th className="py-2 pr-4 font-medium text-zinc-700 dark:text-zinc-300">
-                  Contexto
-                </th>
-                <th className="py-2 font-medium text-zinc-700 dark:text-zinc-300">
-                  Quando dispara
-                </th>
-              </tr>
-            </thead>
-            <tbody className="text-zinc-600 dark:text-zinc-400">
-              {[
-                ["beforeQuery", "{ sql, bindings }", "Antes de executar query"],
-                ["afterQuery", "{ sql, bindings, rows }", "Após execução"],
-                ["beforeConnect", "{ config }", "Antes de abrir conexão"],
-                [
-                  "afterConnect",
-                  "{ connection_id }",
-                  "Após conexão estabelecida",
-                ],
-                [
-                  "beforeCreate",
-                  "{ entity, instance?, data }",
-                  "Antes do INSERT",
-                ],
-                ["afterCreate", "{ entity, instance, data }", "Após INSERT"],
-                [
-                  "beforeUpdate",
-                  "{ entity, instance?, data }",
-                  "Antes do UPDATE",
-                ],
-                ["afterUpdate", "{ entity, instance, data }", "Após UPDATE"],
-                ["beforeDelete", "{ entity, instance? }", "Antes do DELETE"],
-                ["afterDelete", "{ entity, instance }", "Após DELETE"],
-                ["extendEntity", "{ entity }", "Ao criar nova Entity"],
-                ["extendQuery", "{ query }", "Ao criar Query builder"],
-                ["extendDriver", "{ driver }", "Ao criar Driver instance"],
-              ].map((row, i) => (
-                <tr
-                  key={i}
-                  className="border-b border-zinc-100 dark:border-zinc-800"
-                >
-                  <td className="py-2 pr-4 font-mono text-emerald-600 dark:text-emerald-400">
-                    {row[0]}
-                  </td>
-                  <td className="py-2 pr-4 font-mono text-xs">{row[1]}</td>
-                  <td className="py-2">{row[2]}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* Configuration */}
-      <section className="mb-12">
-        <h2 className="mb-4 text-xl font-semibold text-zinc-900 dark:text-white">
-          Configuração via jade.config.lua
-        </h2>
-        <CodeBlock
-          code={`return {
-    database = { ... },
-    
-    plugins = {
-        -- Plugin builtin (carregado via require("jade.plugin."..name))
-        { name = "soft-delete" },
-        
-        -- Plugin com options customizadas
-        { name = "cache", ttl = 600, max_size = 2000 },
-        { name = "audit", ignore = {"password"} },
-        
-        -- Plugin externo (do filesystem do projeto)
-        {
-            name   = "community-plugin",
-            source = "external",
-            path   = "./plugins",
-        },
-    }
-}`}
-          language="lua"
-        />
-        <div className="mt-4 flex gap-4 text-xs">
-          <span className="rounded bg-zinc-100 px-2 py-1 font-mono dark:bg-zinc-800">
-            builtin
-          </span>
-          <span className="text-zinc-500">via require()</span>
-          <span className="rounded bg-zinc-100 px-2 py-1 font-mono dark:bg-zinc-800">
-            external
-          </span>
-          <span className="text-zinc-500">caminho local ./plugins</span>
-        </div>
-      </section>
-
-      {/* Examples */}
-      <section className="mb-12">
-        <h2 className="mb-6 text-xl font-semibold text-zinc-900 dark:text-white">
-          Exemplos Práticos
-        </h2>
-        <div className="space-y-12">
-          {pluginExamples.map((example) => (
-            <section key={example.id}>
-              <h3 className="mb-2 text-lg font-semibold text-zinc-900 dark:text-white">
-                {example.title}
-              </h3>
-              <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">
-                {example.description}
-              </p>
-              <CodeBlock code={example.code} language={example.language} />
+                language="lua"
+              />
             </section>
-          ))}
-        </div>
+
+            <section>
+              <h2 className="mb-4 text-xl font-semibold text-zinc-900 dark:text-white">
+                {t("plugins.guideHooks")}
+              </h2>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-zinc-200 dark:border-zinc-700">
+                      <th className="py-2 pr-4 font-medium text-zinc-700 dark:text-zinc-300">
+                        Hook
+                      </th>
+                      <th className="py-2 pr-4 font-medium text-zinc-700 dark:text-zinc-300">
+                        Context
+                      </th>
+                      <th className="py-2 font-medium text-zinc-700 dark:text-zinc-300">
+                        When
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-zinc-600 dark:text-zinc-400">
+                    {[
+                      ["beforeQuery", "{ sql, bindings }", "Before query"],
+                      ["afterQuery", "{ sql, bindings, rows }", "After query"],
+                      ["beforeConnect", "{ config }", "Before connect"],
+                      ["afterConnect", "{ connection_id }", "After connect"],
+                      [
+                        "beforeCreate",
+                        "{ entity, instance?, data }",
+                        "Before INSERT",
+                      ],
+                      [
+                        "afterCreate",
+                        "{ entity, instance, data }",
+                        "After INSERT",
+                      ],
+                      [
+                        "beforeUpdate",
+                        "{ entity, instance?, data }",
+                        "Before UPDATE",
+                      ],
+                      [
+                        "afterUpdate",
+                        "{ entity, instance, data }",
+                        "After UPDATE",
+                      ],
+                      [
+                        "beforeDelete",
+                        "{ entity, instance? }",
+                        "Before DELETE",
+                      ],
+                      ["afterDelete", "{ entity, instance }", "After DELETE"],
+                      ["extendEntity", "{ entity }", "New Entity"],
+                      ["extendQuery", "{ query }", "New Query builder"],
+                      ["extendDriver", "{ driver }", "New Driver"],
+                    ].map((row, i) => (
+                      <tr
+                        key={i}
+                        className="border-b border-zinc-100 dark:border-zinc-800"
+                      >
+                        <td className="py-2 pr-4 font-mono text-emerald-600 dark:text-emerald-400">
+                          {row[0]}
+                        </td>
+                        <td className="py-2 pr-4 font-mono text-xs">
+                          {row[1]}
+                        </td>
+                        <td className="py-2">{row[2]}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="mb-6 text-xl font-semibold text-zinc-900 dark:text-white">
+                {t("plugins.guideExamples")}
+              </h2>
+              <div className="space-y-12">
+                {pluginExamples.map((example) => (
+                  <section key={example.id}>
+                    <h3 className="mb-2 text-lg font-semibold text-zinc-900 dark:text-white">
+                      {example.title}
+                    </h3>
+                    <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">
+                      {example.description}
+                    </p>
+                    <CodeBlock
+                      code={example.code}
+                      language={example.language}
+                    />
+                  </section>
+                ))}
+              </div>
+            </section>
+          </div>
+        )}
       </section>
 
-      {/* Publishing */}
-      <section className="mb-12">
-        <h2 className="mb-4 text-xl font-semibold text-zinc-900 dark:text-white">
-          Publicando como Plugin
-        </h2>
-        <p className="mb-4 text-zinc-600 dark:text-zinc-400">
-          Estrutura recomendada para distribuição via luarocks:
-        </p>
-        <pre className="rounded-md bg-zinc-100 p-4 font-mono text-sm text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-          {`jade-plugin-meuscript/
-├── README.md
-├── LICENSE
-├── lua/jade/plugin/meuscript.lua
-└── meuscript-0.1.0-1.rockspec`}
-        </pre>
-        <div className="mt-4 text-sm text-zinc-600 dark:text-zinc-400">
-          <p>Para publicar:</p>
-          <ol className="mt-2 ml-4 list-inside list-decimal space-y-1">
-            <li>Crie o rockspec seguindo o template oficial</li>
-            <li>
-              <code>luarocks build</code> para testar localmente
-            </li>
-            <li>
-              <code>luarocks upload</code> para publicar no Luarocks
-            </li>
-            <li>
-              Os usuários instalam com{" "}
-              <code>luarocks install jade-plugin-meuscript</code>
-            </li>
-          </ol>
-        </div>
-      </section>
+      <SubmitPluginModal
+        open={modalOpen}
+        user={user}
+        onClose={() => setModalOpen(false)}
+        onSubmitted={() => {
+          void loadList();
+        }}
+      />
     </div>
   );
 }

@@ -93,7 +93,57 @@ export const ptBr = {
   "sidebar.errorCodes": "Códigos de Erro",
   "sidebar.testing": "Testes",
   "sidebar.plugins": "Plugins",
-  "sidebar.creatingPlugins": "Criando Plugins",
+  "sidebar.creatingPlugins": "Guia do Autor",
+  "sidebar.browsePlugins": "Explorar e publicar",
+
+  // Plugins marketplace
+  "plugins.title": "Plugins",
+  "plugins.description":
+    "Plugins oficiais acompanham o Jade. Plugins community são auto-publicados a partir do seu repositório GitHub.",
+  "plugins.official": "Oficiais",
+  "plugins.officialHint": "Mantidos em Jade-ORM/plugins",
+  "plugins.officialBadge": "oficial",
+  "plugins.community": "Community",
+  "plugins.communityHint": "Auto-publicados pelos autores",
+  "plugins.communityBadge": "community",
+  "plugins.submit": "Publicar plugin",
+  "plugins.signIn": "Entrar com GitHub",
+  "plugins.signOut": "Sair",
+  "plugins.signInRequired":
+    "Entre com GitHub para listar um plugin do seu repositório.",
+  "plugins.submitTitle": "Publicar um plugin community",
+  "plugins.submitSubtitle":
+    "Cole a URL de um repositório GitHub público com jade-plugin.json na raiz.",
+  "plugins.repoLabel": "URL do repositório",
+  "plugins.repoHint":
+    "Precisa ser github.com/owner/repo. O repo deve ter um jade-plugin.json válido.",
+  "plugins.submitCta": "Publicar listing",
+  "plugins.submitSuccess": "Seu plugin já aparece em Community.",
+  "plugins.signedInAs": "Publicando como",
+  "plugins.close": "Fechar",
+  "plugins.viewSource": "Código",
+  "plugins.viewRepo": "Repositório",
+  "plugins.refresh": "Atualizar",
+  "plugins.remove": "Remover",
+  "plugins.confirmDelete": "Remover este listing community?",
+  "plugins.empty":
+    "Ainda não há plugins community. Seja o primeiro a publicar.",
+  "plugins.loading": "Carregando plugins community…",
+  "plugins.errList":
+    "Não foi possível carregar os plugins community. Tente novamente.",
+  "plugins.errUrl": "Informe uma URL de repositório GitHub válida.",
+  "plugins.errGeneric": "Algo deu errado. Tente novamente.",
+  "plugins.authError": "Falha no login com GitHub. Tente novamente.",
+  "plugins.guideToggle": "Guia do autor — contrato, hooks e exemplos",
+  "plugins.guideContract": "Manifesto do plugin (jade-plugin.json)",
+  "plugins.guideContractDesc":
+    "Coloque este arquivo na raiz do repositório. O Jade Docs lê ao publicar.",
+  "plugins.guideLua": "Módulo Lua — name, version e setup são obrigatórios:",
+  "plugins.guideInterface": "Interface Lua padrão",
+  "plugins.guideInterfaceDesc":
+    "Todo plugin é uma tabela/módulo Lua com contrato mínimo — name, version e opcionalmente hooks + setup.",
+  "plugins.guideHooks": "Hooks disponíveis",
+  "plugins.guideExamples": "Exemplos práticos",
 
   // Footer
   "footer.copyright": "Jade",
