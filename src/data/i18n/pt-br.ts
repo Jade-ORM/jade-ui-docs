@@ -91,6 +91,7 @@ export const ptBr = {
   "sidebar.luals": "Integração LuaLS",
   "sidebar.reference": "Referência",
   "sidebar.errorCodes": "Códigos de Erro",
+  "sidebar.breakingChanges": "Breaking Changes",
   "sidebar.testing": "Testes",
   "sidebar.plugins": "Plugins",
   "sidebar.creatingPlugins": "Guia do Autor",

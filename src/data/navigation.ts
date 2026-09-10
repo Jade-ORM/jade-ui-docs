@@ -181,6 +181,11 @@ export const docsSidebar: NavItem[] = [
         label: "Error Codes",
         labelKey: "sidebar.errorCodes",
       },
+      {
+        href: "/docs/breaking-changes",
+        label: "Breaking Changes",
+        labelKey: "sidebar.breakingChanges",
+      },
       { href: "/docs/testing", label: "Testing", labelKey: "sidebar.testing" },
       { href: "/docs/plugins", label: "Plugins", labelKey: "sidebar.plugins" },
     ],
