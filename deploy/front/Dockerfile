@@ -2,8 +2,9 @@
 # Build context: jade-ui-docs repo root
 FROM node:20-alpine AS build
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
+# Lockfiles are gitignored in this repo — accept optional lockfile, fall back to npm install
+COPY package.json package-lock.json* ./
+RUN if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
 COPY . .
 # Empty → same-origin /api (nginx proxies to plugin-api)
 ARG VITE_PLUGIN_API_URL=

@@ -13,6 +13,8 @@ Prepared for coordination with **Coord deployment-docs** (`Jade-ORM/deployment-d
 
 **There is no PostgreSQL.** `plugin-api` persists to a local file volume or Upstash/Vercel KV (HTTP REST). A vanilla Redis/Postgres container is not a drop-in.
 
+**Front lockfile:** `package-lock.json` / `yarn.lock` are gitignored in `jade-ui-docs`. The front Dockerfile uses `npm ci` when a lockfile is present in the build context, otherwise `npm install` (clean clone). For bit-reproducible images, commit a lockfile or bake one into the deployment-docs checkout.
+
 ## Layout expected on the deploy PC
 
 ```
