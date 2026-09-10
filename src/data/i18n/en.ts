@@ -91,7 +91,55 @@ export const en = {
   "sidebar.errorCodes": "Error Codes",
   "sidebar.testing": "Testing",
   "sidebar.plugins": "Plugins",
-  "sidebar.creatingPlugins": "Creating Plugins",
+  "sidebar.creatingPlugins": "Author Guide",
+  "sidebar.browsePlugins": "Browse & Submit",
+
+  // Plugins marketplace
+  "plugins.title": "Plugins",
+  "plugins.description":
+    "Official plugins ship with Jade. Community plugins are self-published from your own GitHub repository.",
+  "plugins.official": "Official",
+  "plugins.officialHint": "Maintained in Jade-ORM/plugins",
+  "plugins.officialBadge": "official",
+  "plugins.community": "Community",
+  "plugins.communityHint": "Self-published by authors",
+  "plugins.communityBadge": "community",
+  "plugins.submit": "Submit plugin",
+  "plugins.signIn": "Sign in with GitHub",
+  "plugins.signOut": "Sign out",
+  "plugins.signInRequired":
+    "Sign in with GitHub to list a plugin from your repository.",
+  "plugins.submitTitle": "Submit a community plugin",
+  "plugins.submitSubtitle":
+    "Paste a public GitHub repository that contains jade-plugin.json at the root.",
+  "plugins.repoLabel": "Repository URL",
+  "plugins.repoHint":
+    "Must be github.com/owner/repo. The repo must include a valid jade-plugin.json.",
+  "plugins.submitCta": "Publish listing",
+  "plugins.submitSuccess": "Your plugin is now listed under Community.",
+  "plugins.signedInAs": "Submitting as",
+  "plugins.close": "Close",
+  "plugins.viewSource": "Source",
+  "plugins.viewRepo": "Repository",
+  "plugins.refresh": "Refresh",
+  "plugins.remove": "Remove",
+  "plugins.confirmDelete": "Remove this community listing?",
+  "plugins.empty": "No community plugins yet. Be the first to publish one.",
+  "plugins.loading": "Loading community plugins…",
+  "plugins.errList": "Could not load community plugins. Try again later.",
+  "plugins.errUrl": "Enter a valid GitHub repository URL.",
+  "plugins.errGeneric": "Something went wrong. Try again.",
+  "plugins.authError": "GitHub sign-in failed. Please try again.",
+  "plugins.guideToggle": "Author guide — contract, hooks, and examples",
+  "plugins.guideContract": "Plugin manifest (jade-plugin.json)",
+  "plugins.guideContractDesc":
+    "Place this file at the repository root. Jade Docs reads it when you submit.",
+  "plugins.guideLua": "Lua module — name, version, and setup are required:",
+  "plugins.guideInterface": "Standard Lua interface",
+  "plugins.guideInterfaceDesc":
+    "Every plugin is a Lua table/module with a minimum contract — name, version, and optionally hooks + setup.",
+  "plugins.guideHooks": "Available hooks",
+  "plugins.guideExamples": "Practical examples",
 
   // Footer
   "footer.copyright": "Jade",

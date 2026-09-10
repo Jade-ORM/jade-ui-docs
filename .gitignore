@@ -48,6 +48,9 @@ venv/
 .env.local
 .env.*
 
+# Local plugin store (dev fallback when KV is not configured)
+api/.data/
+
 # IDE
 .vscode/
 .idea/

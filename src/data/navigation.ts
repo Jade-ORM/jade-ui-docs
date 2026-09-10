@@ -192,7 +192,12 @@ export const docsSidebar: NavItem[] = [
     children: [
       {
         href: "/plugins",
-        label: "Creating Plugins",
+        label: "Browse & Submit",
+        labelKey: "sidebar.browsePlugins",
+      },
+      {
+        href: "/plugins",
+        label: "Author Guide",
         labelKey: "sidebar.creatingPlugins",
       },
     ],
